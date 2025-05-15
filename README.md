@@ -103,8 +103,8 @@ Operations units focus on *stability*.
 
 Terraform Products:
 - Business Source License (BSL)
-    - free
-    - includes the Terraform CLI
+  - free
+  - includes the Terraform CLI
 - Terraform Enterprise
 - Terraform Cloud
 
@@ -132,13 +132,30 @@ Microsoft and HashiCorp/Community curated providers:
 
 > The main ones to focus on are `azurerm` and `azapi`.
 
+##### Multiple Provider Configurations
+
+```terraform
+# The default provider configuration; resources that begin with `aws_` will use
+# it as the default, and it can be referenced as `aws`.
+provider "aws" {
+  region = "us-east-1"
+}
+
+# Additional provider configuration for west coast region; resources can
+# reference this as `aws.west`.
+provider "aws" {
+  alias  = "west"
+  region = "us-west-2"
+}
+```
+
 #### Terraform Workflow
 
 Five fundamental steps:
 
 1. **Scope**, or identify the infrastructure for your project
 2. **Write** your configuration code
-3. **Initialize**: run `terraform init` to pull down providers and modules, and create or connect to the current state.
+3. **Initialize**: run `terraform init` to pull down providers and modules, and create or connect to the current state; generates the `terraform.lock.hcl` file
 4. **Plan**: run `terraform plan`to generate a plan for how the actual state will align with the desired state. 
     > queries deployed resources (if any) and compares to the configuration
 5. **Apply**: run `terraform apply` to implement desired state configuration of target environment via API call(s).
@@ -317,6 +334,20 @@ resource "azurerm_resource_group" "example_rg" {
 - automatic dependect management
 - VS Code extensions feature validation and IntellisSense for easier authoring experience
 
+#### Benefits of public Terraform Registry Modules
+
+- centralized repository
+- community-driven
+- versioned and documented
+- easy to find
+- well-maintained
+- reuseable
+
 ## Azure Verified Modules (AVM)
 
 > For this portion of the LP, I will be leveraging the [AVM Documentaion](aka.ms/avm) LP and taking notes. Feel free to clone this repo and make your own notes if that fits your learning style.
+
+# All Resources
+
+## Whizlabs
+- [HashiCorp Certified Terraform Associate](https://www.whizlabs.com/hashicorp-certified-terraform-associate/)
