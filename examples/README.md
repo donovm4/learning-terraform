@@ -1,4 +1,6 @@
-# Sample Configurations
+# Examples
+
+## Sample Configurations
 
 This folder houses some samples to learn about Terraform configurations.
 

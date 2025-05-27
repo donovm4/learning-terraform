@@ -81,7 +81,7 @@ module "avm-res-storage-storageaccount" {
   network_rules = {
     bypass                     = ["AzureServices"]
     default_action             = "Deny"
-    ip_rules = ["173.73.57.85"]
+    ip_rules = ["173.73.57.85", "192.168.1.165"]
     # ip_rules                   = [try(module.public_ip[0].public_ip, var.bypass_ip_cidr)]
     virtual_network_subnet_ids = toset([azurerm_subnet.private.id])
   }

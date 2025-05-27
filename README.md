@@ -97,13 +97,17 @@ Operations units focus on *stability*.
 
 ### What is Terraform?
 
+- IaC software
+- declarative
+- cloud agnostic
+
 `Terraform` uses **HashiCorp Configuration Language (HCL)**, which *declaratively* deploys resources and is intended to be easy to learn and understand.
 
 > HCL is a **domain-specific language**, meaning that it is designed for a target scenario, environment, or *domain*
 
 Terraform Products:
-- Business Source License (BSL)
-  - free
+- **Business Source License (BSL)**
+  - FREE
   - includes the Terraform CLI
 - Terraform Enterprise
 - Terraform Cloud
