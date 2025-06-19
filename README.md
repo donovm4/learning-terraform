@@ -153,6 +153,8 @@ provider "aws" {
 }
 ```
 
+> It is important to note that you can't create multiple resources for different providers without using the `alias` meta-argument.
+
 #### Terraform Workflow
 
 Five fundamental steps:
@@ -172,6 +174,8 @@ Other help commands to know:
 - `terraform show` allows you to inspect the current state with resource properties and meta-data.
 - `terraform state list` shows a list of resource created in the state
   > `terraform state` will show a full of available subcommands and options
+  > `terraform state mv <current_reference> <target_reference>` allows to move an item in the state.
+  > `terraform state show <name_of_resource>` will show a resource in the state
 
 #### Terraform Lifecycle
 
@@ -200,6 +204,8 @@ The `terraform` block contains `Terraform` settings. This is where you specify t
 - You can define `version constraints` for `Terraform` by using `required_version`
 - It is possible to define `version constraints` for each provider in the `required_providers` block. 
   - `version` is an optional attribute, but HashiCorp recommends using it to enforce the `provider` version. If `version` is not set, `Terraform` will *always* use the latest version of the `provider`, which may introduce **breaking changes** to your configuration/infrastructure.
+
+##### Backend
 
 #### Version Constraint syntax
 
@@ -281,7 +287,15 @@ resource "<type>" "<name>" {
   attribute = <value>
 }
 
+resource "<type>" "<name>" {
+  provisioner "<type>" {
+
+  }
+}
+
 ```
+
+#### Data source block
 
 #### Complete configuration
 
@@ -349,6 +363,10 @@ resource "azurerm_resource_group" "example_rg" {
 - required to support the `Terraform` lifecycle
 
 > **State files can contain sensitive data.** Users should consider storing securely.
+
+##### Terraform Workspaces
+
+- allows multiple state files within a single configuration
 
 #### Benefits of Terraform over ARM
 
