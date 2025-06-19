@@ -309,6 +309,25 @@ resource "azurerm_resource_group" "example_rg" {
 }
 ```
 
+#### Environment Variables
+
+> I am not sure how important this is for the Associate exam (003), but it may be nice to at least list the official Terraform CLI environment variables, per [doc](https://developer.hashicorp.com/terraform/cli/config/environment-variables).
+
+- `TF_LOG`
+- `TF_LOG_PATH`
+- `TF_WORKSPACE`
+- `TF_VAR_name`
+- `TF_CLI_ARGS`
+- `TF_CLI_ARGS_name`
+- `TF_DATA_DIR`
+- `TF_IN_AUTOMATION`
+- `TF_REGISTRY_DISCOVERY_RETRY`
+- `TF_REGISTRY_CLIENT_TIMEOUT`
+- `TF_STATE_PERSIST_INTERVAL`
+- `TF_CLI_CONFIG_FILE`
+- `TF_PLUGIN_CACHE_DIR`
+
+
 ### ARM vs Terraform State
 
 #### ARM
