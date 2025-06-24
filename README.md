@@ -1,4 +1,4 @@
-# Learning Path for IaC, Terraform, AVM
+# Learning Path for IaC concepts, Terraform, AzureDevOps and potentially AVM
 
 > Acronyms  
 > LP - *Learning Path*  
@@ -87,8 +87,6 @@ Operations units focus on *stability*.
 
 #### Vocab words and concepts that don't have a clear section yet:
 
-
-
 `Circular dependency`: indicates there is an issue with dpendency sequencing causing an infinite loop, meaning the deployment becomes unable to continue.
 
 ## Terraform
@@ -123,7 +121,7 @@ Terraform `providers` are responsible for connecting the `Terraform CLI` with th
 
 `Providers` are loaded into the `Terraform CLI` during the `terraform init` phase based on the requirements set in the configuration. 
   - **resources** are managed with Terraform
-  - **data sources** are used to read attributes of an existing resource, regardless of what is managing it.
+  - **data sources** are used to read and/or pass attributes of an existing resource, regardless of what is managing it.
 
 > Providers MUST be written in `Go` programming languange
 
@@ -176,6 +174,7 @@ Other help commands to know:
   > `terraform state` will show a full of available subcommands and options
   > `terraform state mv <current_reference> <target_reference>` allows to move an item in the state.
   > `terraform state show <name_of_resource>` will show a resource in the state
+- `terraform console` allows you to test with functions and expressions
 
 #### Terraform Lifecycle
 
@@ -295,8 +294,6 @@ resource "<type>" "<name>" {
 
 ```
 
-#### Data source block
-
 #### Complete configuration
 
 ```
@@ -323,6 +320,32 @@ resource "azurerm_resource_group" "example_rg" {
 }
 ```
 
+#### Data source block
+
+```
+data "azurerm_resource_group" "existing" {
+  name = "learning-terraform-003"
+}
+
+resource "azurerm_key_vault" "example" {
+  name = "examplekeyvault"
+  location = data.azurerm_resource_group.existing.location
+  resource_group_name = data.azurerm_resource_group.existing.name
+  sku_name = "standard"
+  tenant_id = data.azurerm_client_config.current.tenant_id
+
+  purge_protection_enabled = false
+}
+```
+
+#### Variables
+
+
+
+#### .tfvars
+
+
+
 #### Environment Variables
 
 > I am not sure how important this is for the Associate exam (003), but it may be nice to at least list the official Terraform CLI environment variables, per [doc](https://developer.hashicorp.com/terraform/cli/config/environment-variables).
@@ -341,6 +364,13 @@ resource "azurerm_resource_group" "example_rg" {
 - `TF_CLI_CONFIG_FILE`
 - `TF_PLUGIN_CACHE_DIR`
 
+### Expressions
+
+### Iteration
+
+### Refactoring
+
+### Functions 
 
 ### ARM vs Terraform State
 
@@ -386,7 +416,7 @@ resource "azurerm_resource_group" "example_rg" {
 
 ## Azure Verified Modules (AVM)
 
-> For this portion of the LP, I will be leveraging the [AVM Documentaion](aka.ms/avm) LP and taking notes. Feel free to clone this repo and make your own notes if that fits your learning style.
+> [AVM Documentaion](aka.ms/avm)
 
 # All Resources
 
