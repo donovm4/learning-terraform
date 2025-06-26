@@ -153,6 +153,8 @@ provider "aws" {
 
 > It is important to note that you can't create multiple resources for different providers without using the `alias` meta-argument.
 
+> Defining multiple provider blocks ensures that Terraform can manage resources across different cloud providers, assigning each resource to the correct provider.
+
 #### Terraform Workflow
 
 Five fundamental steps:
@@ -163,7 +165,8 @@ Five fundamental steps:
 4. **Plan**: run `terraform plan`to generate a plan for how the actual state will align with the desired state. 
     > queries deployed resources (if any) and compares to the configuration
 5. **Apply**: run `terraform apply` to implement desired state configuration of target environment via API call(s).
-    > `terraform apply -auto-approve` will skip confirmation check
+    > `terraform apply --auto-approve` will skip confirmation check  
+    > `terraform apply --replace=<resource>` will replace resource even if no configuration changes  
 
 Other help commands to know:
 
@@ -282,11 +285,11 @@ provider "<provider>" {
   ...
 }
 
-resource "<type>" "<name>" {
+resource "<resorce_type>" "<local_name>" {
   attribute = <value>
 }
 
-resource "<type>" "<name>" {
+resource "<resorce_type>" "<local_name>" {
   provisioner "<type>" {
 
   }
@@ -353,10 +356,12 @@ resource "azurerm_key_vault" "example" {
 - `TF_LOG`
 - `TF_LOG_PATH`
 - `TF_WORKSPACE`
+  - For multi-environment deployment, in order to select a workspace, instead of doing ’terraform workspace select your_workspace’
 - `TF_VAR_name`
 - `TF_CLI_ARGS`
 - `TF_CLI_ARGS_name`
 - `TF_DATA_DIR`
+  - used to ‘set’ per-working-directory data
 - `TF_IN_AUTOMATION`
 - `TF_REGISTRY_DISCOVERY_RETRY`
 - `TF_REGISTRY_CLIENT_TIMEOUT`
@@ -371,6 +376,10 @@ resource "azurerm_key_vault" "example" {
 ### Refactoring
 
 ### Functions 
+
+- `lookup(map, key, default)`
+- `index(list, value)`
+- `zipmap(keyslist, valueslist)`
 
 ### ARM vs Terraform State
 
@@ -413,6 +422,17 @@ resource "azurerm_key_vault" "example" {
 - easy to find
 - well-maintained
 - reuseable
+
+### Policy As Code
+
+Policy as code is the idea of writing code in a high-level language to manage and automate policies. By representing policies as code in text files, proven software development best practices can be adopted such as version control, automated testing, and automated deployment.
+
+Benefits according to [Hashicorp](https://developer.hashicorp.com/sentinel/docs/concepts/policy-as-code):
+- Sandboxing
+- Codification
+- Version Control
+- Testing
+- Automation
 
 ## Azure Verified Modules (AVM)
 
