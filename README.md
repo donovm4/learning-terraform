@@ -89,6 +89,8 @@ Operations units focus on *stability*.
 
 `Circular dependency`: indicates there is an issue with dpendency sequencing causing an infinite loop, meaning the deployment becomes unable to continue.
 
+
+
 ## Terraform
 
 > For this portion of the LP, I will be leveraging the [Fundamentals of Terraform on Azure]() LP, [Hashicorp Terraform Documentation](), and [Hashicorp Terraform Tutorial](). Feel free to clone this repo and make your own notes if that fits your learning style.
@@ -173,11 +175,14 @@ Other help commands to know:
 - `terraform fmt` formats your configuration file(s); returns the name of files it modifies, if any.
 - `terraform validate` allows you to validate if your configuration is syntatically valid and consistent
 - `terraform show` allows you to inspect the current state with resource properties and meta-data.
-- `terraform state list` shows a list of resource created in the state
+- `terraform state list` shows a list of resources created in the state
   > `terraform state` will show a full of available subcommands and options
   > `terraform state mv <current_reference> <target_reference>` allows to move an item in the state.
   > `terraform state show <name_of_resource>` will show a resource in the state
 - `terraform console` allows you to test with functions and expressions
+- `terraform login` initiates login processes to authenticate within Terraform Cloud using the CLI to manage workspaces and run operations.
+- `terraform state pull` retrieves the new remote state file for that workspace
+
 
 #### Terraform Lifecycle
 
@@ -354,6 +359,11 @@ resource "azurerm_key_vault" "example" {
 > I am not sure how important this is for the Associate exam (003), but it may be nice to at least list the official Terraform CLI environment variables, per [doc](https://developer.hashicorp.com/terraform/cli/config/environment-variables).
 
 - `TF_LOG`
+  - TRACE is the most verbose
+  - DEBUG
+  - INFO
+  - WARN
+  - ERROR
 - `TF_LOG_PATH`
 - `TF_WORKSPACE`
   - For multi-environment deployment, in order to select a workspace, instead of doing ’terraform workspace select your_workspace’
@@ -381,6 +391,27 @@ resource "azurerm_key_vault" "example" {
 - `index(list, value)`
 - `zipmap(keyslist, valueslist)`
 
+### Logs
+
+`+`
+
+- indicates that a resource will be added
+
+`-`
+
+- indicates that a resource will be destroyed
+
+`~`
+
+- indicates that a resource will be updated
+
+### Connections and Executables
+
+`local-exec`: provisioner that invokes a local executable *after* a resource is created. This invokes a process **on the machine running Terraform**, *not* on the resource. 
+
+`remote-exec`: provisioner that invokes a script **on a remote resource** after it is created ;see [here](https://developer.hashicorp.com/terraform/language/resources/provisioners/remote-exec)
+> Supported connection types include **ssh** and **winrm** for remote executions.
+
 ### ARM vs Terraform State
 
 #### ARM
@@ -400,12 +431,14 @@ resource "azurerm_key_vault" "example" {
 - maps resource declaration to the ID of the resource in a target environment
 - uses `terraform plan` to detect configuration updates
 - required to support the `Terraform` lifecycle
+- stores **implicit** and **explicit** dependencies
 
 > **State files can contain sensitive data.** Users should consider storing securely.
 
 ##### Terraform Workspaces
 
 - allows multiple state files within a single configuration
+- N workspaces : 1 repository relationship
 
 #### Benefits of Terraform over ARM
 
@@ -422,6 +455,14 @@ resource "azurerm_key_vault" "example" {
 - easy to find
 - well-maintained
 - reuseable
+
+### Terraform Cloud
+
+> for CLI and API interactions, API tokens usually need to be generated to access Terraform Cloud; see [here](https://developer.hashicorp.com/terraform/cli/commands/login)
+
+### Terraform Enterprise
+
+- uses PostgreSQL as the backend database
 
 ### Policy As Code
 
