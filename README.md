@@ -214,6 +214,10 @@ The `terraform` block contains `Terraform` settings. This is where you specify t
 
 ##### Backend
 
+The local backend (default) stores the state file on the local disk in plain text. 
+
+> If you want to secure the file, you must manually configure encryption mechanisms, access controls, and backups. This option highlights the user’s responsibility for managing and protecting the state file.
+
 #### Version Constraint syntax
 
 - A `version constraint` is a `string literal` that can have one or more `conditions` separated by commas.  
