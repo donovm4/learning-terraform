@@ -1,0 +1,4 @@
+sensitive.variables.tf 
+*.tfstate*
+*.lock.hcl
+.terraform
