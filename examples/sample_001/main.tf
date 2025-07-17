@@ -16,6 +16,6 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "example_rg" {
-  name     = "learning-terraform-001"
+  name     = "learning-terraform-sample-001"
   location = "eastus"
 }

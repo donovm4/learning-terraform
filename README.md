@@ -87,7 +87,7 @@ Operations units focus on *stability*.
 
 #### Vocab words and concepts that don't have a clear section yet:
 
-`Circular dependency`: indicates there is an issue with dpendency sequencing causing an infinite loop, meaning the deployment becomes unable to continue.
+
 
 
 
@@ -363,7 +363,8 @@ resource "azurerm_key_vault" "example" {
 > I am not sure how important this is for the Associate exam (003), but it may be nice to at least list the official Terraform CLI environment variables, per [doc](https://developer.hashicorp.com/terraform/cli/config/environment-variables).
 
 - `TF_LOG`
-  - TRACE is the most verbose
+  > diagnose complex issues or unexpected behavior
+  - TRACE (most verbose)
   - DEBUG
   - INFO
   - WARN
@@ -394,6 +395,33 @@ resource "azurerm_key_vault" "example" {
 - `lookup(map, key, default)`
 - `index(list, value)`
 - `zipmap(keyslist, valueslist)`
+
+#### Numeric
+
+- `max(x, y, z)` will result in the largest value
+  > `max(12, 54, 9)` will result in `54`
+- `ceil()`
+- `floor()`
+
+#### String
+
+- `endswith(string, string)` returns a boolean
+- `format("%s", string)`
+- `replace(string, targeted, desired_value)`
+- `title(string)` capitalizes the first letter in each word
+
+#### Collection
+
+#### Date & Time
+
+#### Type conversion
+
+- `alltrue(collection)` returns boolean
+- `values({collection})`
+- `setintersection([collection], [collection])`
+
+
+
 
 ### Logs
 
@@ -436,8 +464,37 @@ resource "azurerm_key_vault" "example" {
 - uses `terraform plan` to detect configuration updates
 - required to support the `Terraform` lifecycle
 - stores **implicit** and **explicit** dependencies
+- **State files can contain sensitive data.** Users should consider storing securely.
+- state locking is important
+- granular permissions are not supported with opn-source Terraform
 
-> **State files can contain sensitive data.** Users should consider storing securely.
+> `Implicit`: Terraform determines dependencies automatically based on configuration references  
+> `Explicit`: user-defined `depends_on` meta argument  
+> `Circular`: indicates there is an issue with dpendency sequencing causing an infinite loop, meaning the deployment becomes unable to continue
+
+##### Local State
+- stores the state file locally as terraform.tfstate
+- manages and updates state file on the local machine
+
+##### Remote State
+- stores the state file in remote data store
+- allows sharing with team members
+- essential for scale
+
+example of using AWS S3 backend:
+```terraform
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-west-2"
+    dynamodb_table = "terraform-locks"
+  }
+}
+```
+
+
+
 
 ##### Terraform Workspaces
 
