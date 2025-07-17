@@ -17,6 +17,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: e2e
     steps: 
       - name: Azure CLI Login
         uses: azure/login@v2
