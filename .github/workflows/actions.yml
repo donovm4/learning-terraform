@@ -17,7 +17,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    # environment: e2e
+    environment: e2e
     env:
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
