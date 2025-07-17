@@ -13,11 +13,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3 
         with:
-          terraform_version: ">=1.5.0 # Or use a variable or secret
+          terraform_version: ">=1.5.0" # Or use a variable or secret
 
       - name: Terraform Init
         run: terraform init 
