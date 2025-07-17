@@ -32,7 +32,9 @@ jobs:
       #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
       #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       #     inlineScript: az login
-    
+      
+      - uses: actions/checkout@v4
+
       - name: Azure CLI script
         uses: azure/cli@v2
         with:
@@ -41,7 +43,7 @@ jobs:
             az login
             az account show
 
-      - uses: actions/checkout@v4
+      
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3 
