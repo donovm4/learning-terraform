@@ -1,4 +1,4 @@
-# Learning Path for IaC concepts, Terraform, AzureDevOps and potentially AVM
+# Learning Path for IaC concepts, Terraform, GitHub actions, AzureDevOps pipelines, and  AVM
 
 > Acronyms  
 > LP - *Learning Path*  

@@ -9,8 +9,8 @@ terraform {
   # Must be specified POST-deployment of storage used for remote
   backend "azurerm" {
     resource_group_name  = "rg-remote-terraform-state"
-    container_name       = "example-remote-backend"
-    storage_account_name = "remotestatestcaj0"
+    container_name       = "qa-remote"
+    storage_account_name = "remotestatesteo2v"
     key                  = "terraform.tfstate"
   }
 }
@@ -28,7 +28,7 @@ module "naming" {
 }
 
 resource "azurerm_resource_group" "example_rg" {
-  name     = "rg-remote-infrastructure"
+  name     = "rg-qa-infrastructure"
   location = "eastus"
 }
 

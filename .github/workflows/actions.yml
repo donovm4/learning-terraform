@@ -1,0 +1,62 @@
+author: donovm4
+name: e2e - testexamples
+
+on:
+  push:
+    branches:
+      - dev # Run tests on pushes to the development branch
+      - main # Run tests on pushes to the development branch
+  pull_request:
+    branches:
+      - main # Run tests on pull requests targeting the main branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3 
+        with:
+          terraform_version: ">=1.5.0 # Or use a variable or secret
+
+      - name: Terraform Init
+        run: terraform init 
+        env:
+          TF_LOG: INFO # Enable detailed logging for debugging
+        shell: bash
+
+      - name: Check Terraform formatting
+        run: terraform fmt -check 
+        shell: bash
+
+      - name: Validate Terraform configuration
+        run: terraform validate
+        shell: bash 
+
+      - name: terraform plan
+        run: |
+          terraform plan -detailed-exitcode
+          echo PLANCODE="$?" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+        working-directory: examples/sample_001
+        shell: bash
+
+      - name: terraform apply
+        run: terraform apply -auto-approve
+        working-directory: examples/sample_001
+        shell: bash
+
+      - name: terraform plan
+        run: |
+          terraform plan -detailed-exitcode
+          echo PLANCODE="$?" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+        working-directory: examples/sample_001
+        shell: bash
+
+      - name: terraform destroy
+        run: terraform destroy -auto-approve
+        working-directory: examples/sample_001
+        shell: bash
+        if: always()
+
