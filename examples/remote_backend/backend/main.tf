@@ -79,15 +79,15 @@ module "avm-res-storage-storageaccount" {
   shared_access_key_enabled     = true
   public_network_access_enabled = true
   network_rules = {
-    bypass                     = ["AzureServices"]
-    default_action             = "Deny"
-    ip_rules = var.ip_addrs
+    bypass         = ["AzureServices"]
+    default_action = "Deny"
+    ip_rules       = var.ip_addrs
     # ip_rules                   = [try(module.public_ip[0].public_ip, var.bypass_ip_cidr)]
     virtual_network_subnet_ids = toset([azurerm_subnet.private.id])
   }
   containers = {
     blob_container0 = {
-      name          = "dev-remote"
+      name = "dev-remote"
     }
     blob_container1 = {
       name = "qa-remote"

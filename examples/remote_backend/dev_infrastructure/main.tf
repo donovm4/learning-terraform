@@ -30,6 +30,6 @@ module "naming" {
 resource "azurerm_resource_group" "example_rg" {
   name     = "rg-dev-infrastructure"
   location = "eastus"
-  tags = local.tags
+  tags     = local.tags
 }
 
