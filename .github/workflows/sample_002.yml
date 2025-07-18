@@ -2,10 +2,10 @@
 name: e2e - sample_002
 
 on:
-  push:
-    branches:
-      # - dev # Run tests on pushes to the development branch
-      # - main # Run tests on pushes to the development branch
+  # push:
+  #   branches:
+  #     - dev # Run tests on pushes to the development branch
+  #     - main # Run tests on pushes to the development branch
   pull_request:
     branches:
       - main # Run tests on pull requests targeting the main branch

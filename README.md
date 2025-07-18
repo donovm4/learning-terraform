@@ -89,8 +89,19 @@ Operations units focus on *stability*.
 
 #### Vocab words and concepts that don't have a clear section yet:
 
+- [`terraform_remote_state` data source](https://developer.hashicorp.com/terraform/language/state/remote-state-data)
 
-
+  ```
+  data "terraform_remote_state" "remote_state" {
+    backend = "remote"
+    config = {
+      organization = "whizlabs"
+      workspaces = {
+        name = "prod"
+      }
+    }
+  }
+  ```
 
 
 ## Terraform
@@ -201,6 +212,16 @@ Other help commands to know:
   > - `terraform state push <name_of_local_state>` will update a remote state with locat state content
   > - `terraform state pull` retrieves the new remote state file for that workspace
 - `terraform console` allows you to test with functions and expressions
+  > - can be used to run non-interactive scripts
+  > - ex: `~ echo 'split(",", "foo,bar,baz")' | terraform console`  
+  >   RESULT:  
+  >   ```
+  >   tolist([
+  >   "foo",
+  >   "bar",
+  >   "baz",
+  >   ])
+  >   ```
 - `terraform login` initiates login processes to authenticate within Terraform Cloud using the CLI to manage workspaces and run operations.
 - `terraform output` shows the outputs from the terraform configuration
   > - `terraform output <value>` will show specified output.
@@ -231,6 +252,7 @@ Three stages:
 The `terraform` block contains `Terraform` settings. This is where you specify the required `providers` that `Terraform` will use to provision the infrastructure.
 
 - You can define `version constraints` for `Terraform` by using `required_version`
+  > **Constant values** only, no variable references allowed
 - It is possible to define `version constraints` for each provider in the `required_providers` block. 
   - `version` is an optional attribute, but HashiCorp recommends using it to enforce the `provider` version. If `version` is not set, `Terraform` will *always* use the latest version of the `provider`, which may introduce **breaking changes** to your configuration/infrastructure.
 
@@ -526,12 +548,14 @@ To generate configuration, run terraform plan with the -generate-config-out flag
 
 - JSON-based representation of resources managed with `Terraform`
 - maps resource declaration to the ID of the resource in a target environment
+  > same as "mapping to the real world"
 - uses `terraform plan` to detect configuration updates
 - required to support the `Terraform` lifecycle
 - stores **implicit** and **explicit** dependencies
 - **State files can contain sensitive data.** Users should consider storing securely.
-- state locking is important
+- state locking is important / syncing with map to real world
 - granular permissions are not supported with opn-source Terraform
+- metadata performance
 
 > Currently Terraform has no mechanism to redact or protect secrets that are returned via data sources.
 
@@ -577,6 +601,11 @@ To generate configuration, run terraform plan with the -generate-config-out flag
 - well-maintained
 - reuseable
 
+#### Terraform PRIVATE Registry
+
+- The syntax for referencing private modules is: `<HOSTNAME>/<ORGANIZATION>/<MODULE NAME>/<PROVIDER>`
+- The hostname for Terraform Cloud is : `https://app.terraform.io/`
+
 ### Terraform Cloud
 
 - provides policy-as-code through `Sentinel`
@@ -603,6 +632,24 @@ Benefits according to [Hashicorp](https://developer.hashicorp.com/sentinel/docs/
 - Version Control
 - Testing
 - Automation
+
+#### Sentinel
+
+- *hard mandatory*
+- *soft mandatory*
+- *advisory*
+
+[Policy levels](https://developer.hashicorp.com/terraform/cloud-docs/policy-enforcement/manage-policy-sets#enforcement-levels)
+
+#### OPA
+
+#### Supported VCS
+
+> VCS = version control system
+
+- For Terraform Cloud / HCP Terraform and Terraform Enterprise
+
+[Source](https://developer.hashicorp.com/terraform/cloud-docs/vcs#supported-vcs-providers)
 
 ## Terraform public publishing
 
