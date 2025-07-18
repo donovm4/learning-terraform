@@ -116,6 +116,17 @@ Terraform Products:
 
 > Although there are multiple related Terraform products, BSL includes the `Terraform CLI` which is the only tool you need to deploy Terraform.
 
+#### High-level versus Low-level
+
+- **High-level languages** prioritize ease of use and readability.  
+- **Low-level languages** require deeper knowledge but may provide more control.
+
+> Terraform's low-level configuration syntax is *technically* `HCL`, although it can also be written in `JSON`.
+
+#### Use cases (fill out a bit)
+
+[Source](https://developer.hashicorp.com/terraform/intro/use-cases)
+
 #### Terraform CLI
 
 - focuses on managing state and plan deployments
@@ -184,12 +195,15 @@ Other help commands to know:
 - `terraform validate` allows you to validate if your configuration is syntatically valid and consistent
 - `terraform show` allows you to inspect the current state with resource properties and meta-data.
 - `terraform state list` shows a list of resources created in the state
-  > `terraform state` will show a full of available subcommands and options
-  > `terraform state mv <current_reference> <target_reference>` allows to move an item in the state.
-  > `terraform state show <name_of_resource>` will show a specific resource in the state (its attributes and metadata)
+  > - `terraform state` will show a full of available subcommands and options
+  > - `terraform state mv <current_reference> <target_reference>` allows to move an item in the state.
+  > - `terraform state show <name_of_resource>` will show a specific resource in the state (its attributes and metadata)
+  > - `terraform state push <name_of_local_state>` will update a remote state with locat state content
+  > - `terraform state pull` retrieves the new remote state file for that workspace
 - `terraform console` allows you to test with functions and expressions
 - `terraform login` initiates login processes to authenticate within Terraform Cloud using the CLI to manage workspaces and run operations.
-- `terraform state pull` retrieves the new remote state file for that workspace
+- `terraform output` shows the outputs from the terraform configuration
+  > - `terraform output <value>` will show specified output.
 
 
 #### Terraform Lifecycle
@@ -332,6 +346,20 @@ resource "<resorce_type>" "<local_name>" {
 
 ```
 
+#### Modules
+
+- you need a source when referencing modules
+  - allowed sources:
+    - Local paths
+    - Terraform Registry
+    - GitHub
+    - Bitbucket
+    - Generic Git, Mercurial repositories
+    - HTTP URLs
+    - S3 buckets
+    - GCS buckets
+    - Modules in Package Subdirectories
+
 #### Complete configuration
 
 ```
@@ -376,17 +404,17 @@ resource "azurerm_key_vault" "example" {
 }
 ```
 
+### Input Variables (NEED to fill out)
+
+[Source](https://developer.hashicorp.com/terraform/language/values/variables#variable-definition-precedence)
+
 #### Variables
-
-
 
 #### .tfvars
 
-
-
 #### Environment Variables
 
-> I am not sure how important this is for the Associate exam (003), but it may be nice to at least list the official Terraform CLI environment variables, per [doc](https://developer.hashicorp.com/terraform/cli/config/environment-variables).
+[docs](https://developer.hashicorp.com/terraform/cli/config/environment-variables)
 
 - `TF_LOG`
   > diagnose complex issues or unexpected behavior
@@ -530,6 +558,8 @@ To generate configuration, run terraform plan with the -generate-config-out flag
 
 - allows multiple state files within a single configuration
 - N workspaces : 1 repository relationship
+- `default` workspace when you execute `terraform init`
+  > CANNOT be deleted
 
 #### Benefits of Terraform over ARM
 

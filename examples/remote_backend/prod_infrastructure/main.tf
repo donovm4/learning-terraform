@@ -11,7 +11,7 @@ terraform {
     resource_group_name  = "rg-remote-terraform-state"
     container_name       = "prod-remote"
     storage_account_name = "remotestatesteo2v"
-    key                  = "terraform.tfstate"
+    key                  = "terraform.tfstate" # Or a custom name
   }
 }
 

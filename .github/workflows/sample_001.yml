@@ -4,7 +4,7 @@ name: e2e - sample_001
 on:
   push:
     branches:
-      - dev # Run tests on pushes to the development branch
+      # - dev # Run tests on pushes to the development branch
       # - main # Run tests on pushes to the development branch
   pull_request:
     branches:
