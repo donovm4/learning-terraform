@@ -164,6 +164,11 @@ Microsoft and HashiCorp/Community curated providers:
 
 Third-party plug-ins (both providers and provisioners) can be manually installed into the user plugins directory based on OS type.
 
+Terraform CLI configuration file can customize the behavior of the Terraform CLI
+
+- `.terraformrc`
+- `terraform.rc`
+
 ##### Multiple Provider Configurations
 
 ```terraform
@@ -222,7 +227,10 @@ Other help commands to know:
   >   "baz",
   >   ])
   >   ```
-- `terraform login` initiates login processes to authenticate within Terraform Cloud using the CLI to manage workspaces and run operations.
+- `terraform login` initiates login processes to authenticate using the CLI to manage workspaces and run operations.
+  - can be used to automatically obtain and save an API token for **Terraform Cloud**, **Terraform Enterprise**, or any other host that offers Terraform services.
+  - **API tokens only**, *NO username NO passwords*
+  > `terraform login [hostname]`
 - `terraform output` shows the outputs from the terraform configuration
   > - `terraform output <value>` will show specified output.
 
@@ -332,6 +340,7 @@ terraform {
 }
 
 provider "<provider>" {
+  alias = "" # part of generic meta-arguments
   features {}
 }
 ```
@@ -621,6 +630,17 @@ Source: [https://developer.hashicorp.com/terraform/language/state/sensitive-data
 ### Terraform Enterprise
 
 - uses PostgreSQL as the backend database
+
+#### Supported OS:
+
+- Debian 10 / 11
+- Ubuntu 18.04 / 20.04
+- Red Hat Enterprise Linux 7.4 - 7.9 / 8.4 - 8.8 (RedHat Linux Requirements)
+- CentOS 7.4 - 7.9 / 8.4 (CentOS Requirements)
+- Amazon Linux 2.0 / 2023
+- Oracle Linux 7.4 - 7.9 / 8.4
+
+[Documentation](https://developer.hashicorp.com/terraform/enterprise/deploy/replicated/requirements/os-specific/supported-os)
 
 ### Policy As Code
 
