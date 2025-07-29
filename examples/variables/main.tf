@@ -12,10 +12,9 @@ provider "azurerm" {
   features {
 
   }
-  # subscription_id = var.subscription_id
 }
 
 resource "azurerm_resource_group" "example_rg" {
-  name     = "learning-terraform-sample-001"
-  location = "eastus"
+  name     = "learning-terraform-sample-001" # explicitly setting the name of the resource
+  location = var.location
 }

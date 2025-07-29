@@ -1,18 +1,25 @@
 # Referencing existing resources
 
-You can reference existing resources. In this configuration, we are targeting the resource we created in `run_1`. This resource group is managed outside of the `run_2` state file. Using the data source, **we are not managing / importing the resource** into the state - just referencing it.
+You can reference existing resources. With these configurations, we are targeting a resource group we created in `run_1`. This resource group is managed outside of the `run_2` state file. 
 
 `run_1` / `main.tf`:
+
+```
+resource "azurerm_resource_group" "example_rg" {
+  name     = "learning-terraform-003"
+  location = "eastus"
+}
+```
+
+`run_2` / `main.tf`:
+
+You can then reference the object(s) for other tasks, like creating a key vault. Using the data source, _we are **not** managing or importing the resource_ into the state - just **referencing** (or reading) it.
+
 ```
 data "azurerm_resource_group" "existing" {
   name = "learning-terraform-003"
 }
-```
 
-You can then reference the object(s) for other tasks, like creating a key vault.  
-
-`run_2` / `main.tf`:
-```
 resource "azurerm_key_vault" "example" {
   name = "examplekeyvault"
   location = data.azurerm_resource_group.existing.location
