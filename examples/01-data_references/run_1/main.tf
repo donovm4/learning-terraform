@@ -13,7 +13,7 @@ provider "azurerm" {
 
   }
   # Used for local e2e testing
-  subscription_id = var.subscription_id
+  # subscription_id = var.subscription_id
 }
 
 resource "azurerm_resource_group" "example_rg" {
