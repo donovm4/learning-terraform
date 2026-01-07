@@ -1,5 +1,5 @@
 ---
-name: e2e - data_references
+name: e2e - 00-data_references
 
 on:
   # push:
@@ -35,17 +35,17 @@ jobs:
         run: terraform init 
         env:
           TF_LOG: INFO # Enable detailed logging for debugging
-        working-directory: ./examples/data_references/run_1
+        working-directory: ./examples/00-data_references/run_1
         shell: bash
 
       - name: Check Terraform formatting
         run: terraform fmt -check
-        working-directory: ./examples/data_references/run_1
+        working-directory: ./examples/00-data_references/run_1
         shell: bash
 
       - name: Validate Terraform configuration
         run: terraform validate
-        working-directory: ./examples/data_references/run_1
+        working-directory: ./examples/00-data_references/run_1
         shell: bash 
 
       - name: terraform plan
@@ -53,12 +53,12 @@ jobs:
           terraform plan -detailed-exitcode
           echo PLANCODE="$?" >> "$GITHUB_OUTPUT"
         continue-on-error: true
-        working-directory: ./examples/data_references/run_1
+        working-directory: ./examples/00-data_references/run_1
         shell: bash
 
       - name: terraform apply
         run: terraform apply -auto-approve
-        working-directory: ./examples/data_references/run_1
+        working-directory: ./examples/00-data_references/run_1
         shell: bash
 
       - name: terraform plan
@@ -66,12 +66,12 @@ jobs:
           terraform plan -detailed-exitcode
           echo PLANCODE="$?" >> "$GITHUB_OUTPUT"
         continue-on-error: true
-        working-directory: ./examples/data_references/run_1
+        working-directory: ./examples/00-data_references/run_1
         shell: bash
 
       - name: terraform destroy
         run: terraform destroy -auto-approve
-        working-directory: ./examples/data_references/run_1
+        working-directory: ./examples/00-data_references/run_1
         shell: bash
         if: always()
 
