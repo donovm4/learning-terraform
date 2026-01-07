@@ -1,7 +1,7 @@
 locals {
   tags = {
-    env = "dev"
+    env     = "dev"
     project = "proof of concept"
-    state = "remote"
+    state   = "remote"
   }
 }

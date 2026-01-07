@@ -11,7 +11,7 @@ terraform {
     resource_group_name  = "rg-remote-terraform-state"
     container_name       = "dev-remote"
     storage_account_name = "remotestatesteo2v"
-    key                  = "terraform.tfstate"
+    key                  = "terraform.tfstate" # Or a custom name
   }
 }
 
@@ -30,6 +30,6 @@ module "naming" {
 resource "azurerm_resource_group" "example_rg" {
   name     = "rg-dev-infrastructure"
   location = "eastus"
-  tags = local.tags
+  tags     = local.tags
 }
 

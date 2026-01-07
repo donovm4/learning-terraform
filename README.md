@@ -5,14 +5,16 @@
 > IaC - *Infrastructure-as-Code*  
 > AVM - *Azure Verified Modules*  
 > ARM - *Azure Resource Manager*  
-> HCL - *HashiCorp Configuration Language*
+> HCL - *HashiCorp Configuration Language*  
+> RBAC - *role-based access control*
 
 ## Infrastructure as Code (IaC)
 
-`IaC` is the process of automating your infrastructure provisioning, which can decrease user errors and increase efficiency and repeatability.  
+`IaC` is the process of **automating** your infrastructure provisioning, which can decrease user errors and increase efficiency and repeatability.  
 - uses **declarative** coding language, so when users deploy a configuration, it generates the same result on each compilation (known as idempotency)
 - Users can leverage version control
 
+> From complete IaC approach, AUTOMATE EVERYTHING!
 
 > `Idempotency`: the ability to apply `N` number of operations against a resource that will still result in the same configuration/outcome.
 
@@ -87,8 +89,19 @@ Operations units focus on *stability*.
 
 #### Vocab words and concepts that don't have a clear section yet:
 
+- [`terraform_remote_state` data source](https://developer.hashicorp.com/terraform/language/state/remote-state-data)
 
-
+  ```
+  data "terraform_remote_state" "remote_state" {
+    backend = "remote"
+    config = {
+      organization = "whizlabs"
+      workspaces = {
+        name = "prod"
+      }
+    }
+  }
+  ```
 
 
 ## Terraform
@@ -114,16 +127,29 @@ Terraform Products:
 
 > Although there are multiple related Terraform products, BSL includes the `Terraform CLI` which is the only tool you need to deploy Terraform.
 
+#### High-level versus Low-level
+
+- **High-level languages** prioritize ease of use and readability.  
+- **Low-level languages** require deeper knowledge but may provide more control.
+
+> Terraform's low-level configuration syntax is *technically* `HCL`, although it can also be written in `JSON`.
+
+#### Use cases (fill out a bit)
+
+[Source](https://developer.hashicorp.com/terraform/intro/use-cases)
+
 #### Terraform CLI
 
 - focuses on managing state and plan deployments
 - has no *knowledge* regarding any cloud or API inherently
 
-Terraform `providers` are responsible for connecting the `Terraform CLI` with the target API. Think of providers as a type of *plug-in*.  
+Terraform `providers` are responsible for connecting the `Terraform CLI` with the target API. Think of providers as a type of *plug-in*. 
+
+> Plug-ins are written in `Go` language.
 
 `Providers` are loaded into the `Terraform CLI` during the `terraform init` phase based on the requirements set in the configuration. 
   - **resources** are managed with Terraform
-  - **data sources** are used to read and/or pass attributes of an existing resource, regardless of what is managing it.
+  - **data sources** are used to read and/or pass attributes of an existing resource, regardless of what is managing it. these can be provided by anyone.
 
 > Providers MUST be written in `Go` programming languange
 
@@ -134,7 +160,14 @@ Microsoft and HashiCorp/Community curated providers:
 - [`azuredevops`]():
 - [`github`]():
 
-> The main ones to focus on are `azurerm` and `azapi`.
+> The main ones to focus on in my case, are `azurerm` and `azapi`.
+
+Third-party plug-ins (both providers and provisioners) can be manually installed into the user plugins directory based on OS type.
+
+Terraform CLI configuration file can customize the behavior of the Terraform CLI
+
+- `.terraformrc`
+- `terraform.rc`
 
 ##### Multiple Provider Configurations
 
@@ -164,11 +197,13 @@ Five fundamental steps:
 1. **Scope**, or identify the infrastructure for your project
 2. **Write** your configuration code
 3. **Initialize**: run `terraform init` to pull down providers and modules, and create or connect to the current state; generates the `terraform.lock.hcl` file
+    > `terraform.lock.hcl` allows you to specify exact module versions and constraints
 4. **Plan**: run `terraform plan`to generate a plan for how the actual state will align with the desired state. 
     > queries deployed resources (if any) and compares to the configuration
 5. **Apply**: run `terraform apply` to implement desired state configuration of target environment via API call(s).
     > `terraform apply --auto-approve` will skip confirmation check  
     > `terraform apply --replace=<resource>` will replace resource even if no configuration changes  
+    > `terraform apply --destroy` and `terraform destroy` will deprovision resources (remove from state)
 
 Other help commands to know:
 
@@ -176,12 +211,28 @@ Other help commands to know:
 - `terraform validate` allows you to validate if your configuration is syntatically valid and consistent
 - `terraform show` allows you to inspect the current state with resource properties and meta-data.
 - `terraform state list` shows a list of resources created in the state
-  > `terraform state` will show a full of available subcommands and options
-  > `terraform state mv <current_reference> <target_reference>` allows to move an item in the state.
-  > `terraform state show <name_of_resource>` will show a resource in the state
+  > - `terraform state` will show a full of available subcommands and options
+  > - `terraform state mv <current_reference> <target_reference>` allows to move an item in the state.
+  > - `terraform state show <name_of_resource>` will show a specific resource in the state (its attributes and metadata)
+  > - `terraform state push <name_of_local_state>` will update a remote state with locat state content
+  > - `terraform state pull` retrieves the new remote state file for that workspace
 - `terraform console` allows you to test with functions and expressions
-- `terraform login` initiates login processes to authenticate within Terraform Cloud using the CLI to manage workspaces and run operations.
-- `terraform state pull` retrieves the new remote state file for that workspace
+  > - can be used to run non-interactive scripts
+  > - ex: `~ echo 'split(",", "foo,bar,baz")' | terraform console`  
+  >   RESULT:  
+  >   ```
+  >   tolist([
+  >   "foo",
+  >   "bar",
+  >   "baz",
+  >   ])
+  >   ```
+- `terraform login` initiates login processes to authenticate using the CLI to manage workspaces and run operations.
+  - can be used to automatically obtain and save an API token for **Terraform Cloud**, **Terraform Enterprise**, or any other host that offers Terraform services.
+  - **API tokens only**, *NO username NO passwords*
+  > `terraform login [hostname]`
+- `terraform output` shows the outputs from the terraform configuration
+  > - `terraform output <value>` will show specified output.
 
 
 #### Terraform Lifecycle
@@ -209,6 +260,7 @@ Three stages:
 The `terraform` block contains `Terraform` settings. This is where you specify the required `providers` that `Terraform` will use to provision the infrastructure.
 
 - You can define `version constraints` for `Terraform` by using `required_version`
+  > **Constant values** only, no variable references allowed
 - It is possible to define `version constraints` for each provider in the `required_providers` block. 
   - `version` is an optional attribute, but HashiCorp recommends using it to enforce the `provider` version. If `version` is not set, `Terraform` will *always* use the latest version of the `provider`, which may introduce **breaking changes** to your configuration/infrastructure.
 
@@ -217,6 +269,24 @@ The `terraform` block contains `Terraform` settings. This is where you specify t
 The local backend (default) stores the state file on the local disk in plain text. 
 
 > If you want to secure the file, you must manually configure encryption mechanisms, access controls, and backups. This option highlights the user’s responsibility for managing and protecting the state file.
+
+example of using AWS S3 backend:
+```terraform
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-west-2"
+    dynamodb_table = "terraform-locks"
+  }
+}
+```
+
+> **S3 does not have default locking** - technically uses DynamoDB for state locking feature
+
+Example supported backends:
+
+
 
 #### Version Constraint syntax
 
@@ -270,6 +340,7 @@ terraform {
 }
 
 provider "<provider>" {
+  alias = "" # part of generic meta-arguments
   features {}
 }
 ```
@@ -305,6 +376,20 @@ resource "<resorce_type>" "<local_name>" {
 }
 
 ```
+
+#### Modules
+
+- you need a source when referencing modules
+  - allowed sources:
+    - Local paths
+    - Terraform Registry
+    - GitHub
+    - Bitbucket
+    - Generic Git, Mercurial repositories
+    - HTTP URLs
+    - S3 buckets
+    - GCS buckets
+    - Modules in Package Subdirectories
 
 #### Complete configuration
 
@@ -350,17 +435,17 @@ resource "azurerm_key_vault" "example" {
 }
 ```
 
+### Input Variables (NEED to fill out)
+
+[Source](https://developer.hashicorp.com/terraform/language/values/variables#variable-definition-precedence)
+
 #### Variables
-
-
 
 #### .tfvars
 
-
-
 #### Environment Variables
 
-> I am not sure how important this is for the Associate exam (003), but it may be nice to at least list the official Terraform CLI environment variables, per [doc](https://developer.hashicorp.com/terraform/cli/config/environment-variables).
+[docs](https://developer.hashicorp.com/terraform/cli/config/environment-variables)
 
 - `TF_LOG`
   > diagnose complex issues or unexpected behavior
@@ -383,6 +468,8 @@ resource "azurerm_key_vault" "example" {
 - `TF_STATE_PERSIST_INTERVAL`
 - `TF_CLI_CONFIG_FILE`
 - `TF_PLUGIN_CACHE_DIR`
+  - helps cache provider plugins
+    > reduces the need to repeatedly download them and ensuring consistent versions are used.
 
 ### Expressions
 
@@ -420,9 +507,6 @@ resource "azurerm_key_vault" "example" {
 - `values({collection})`
 - `setintersection([collection], [collection])`
 
-
-
-
 ### Logs
 
 `+`
@@ -436,6 +520,18 @@ resource "azurerm_key_vault" "example" {
 `~`
 
 - indicates that a resource will be updated
+
+### `terraform import` (needs to be cleaned up)
+
+erraform can generate code for the resources you define in import blocks that do not already exist in your configuration. Terraform produces HCL to act as a template that contains Terraform's best guess at the appropriate value for each resource argument.
+
+Starting with Terraform's generated HCL, we recommend iterating to find your ideal configuration by removing some attributes, adjusting the value of others, and rearranging resource blocks into files and modules as appropriate.
+
+To generate configuration, run terraform plan with the -generate-config-out flag and supply a new file path. Do not supply a path to an existing file, or Terraform throws an error.
+
+`$ terraform plan -generate-config-out="generated_resources.tf"`
+
+
 
 ### Connections and Executables
 
@@ -461,37 +557,32 @@ resource "azurerm_key_vault" "example" {
 
 - JSON-based representation of resources managed with `Terraform`
 - maps resource declaration to the ID of the resource in a target environment
+  > same as "mapping to the real world"
 - uses `terraform plan` to detect configuration updates
 - required to support the `Terraform` lifecycle
 - stores **implicit** and **explicit** dependencies
 - **State files can contain sensitive data.** Users should consider storing securely.
-- state locking is important
+- state locking is important / syncing with map to real world
 - granular permissions are not supported with opn-source Terraform
+- metadata performance
+
+> Currently Terraform has no mechanism to redact or protect secrets that are returned via data sources.
 
 > `Implicit`: Terraform determines dependencies automatically based on configuration references  
 > `Explicit`: user-defined `depends_on` meta argument  
 > `Circular`: indicates there is an issue with dpendency sequencing causing an infinite loop, meaning the deployment becomes unable to continue
 
 ##### Local State
-- stores the state file locally as terraform.tfstate
+- stores the state file **locally** as terraform.tfstate
 - manages and updates state file on the local machine
+- locks state using system APIs
 
 ##### Remote State
 - stores the state file in remote data store
 - allows sharing with team members
 - essential for scale
 
-example of using AWS S3 backend:
-```terraform
-terraform {
-  backend "s3" {
-    bucket         = "my-terraform-state"
-    key            = "global/s3/terraform.tfstate"
-    region         = "us-west-2"
-    dynamodb_table = "terraform-locks"
-  }
-}
-```
+
 
 
 
@@ -500,6 +591,8 @@ terraform {
 
 - allows multiple state files within a single configuration
 - N workspaces : 1 repository relationship
+- `default` workspace when you execute `terraform init`
+  > CANNOT be deleted
 
 #### Benefits of Terraform over ARM
 
@@ -517,13 +610,37 @@ terraform {
 - well-maintained
 - reuseable
 
+#### Terraform PRIVATE Registry
+
+- The syntax for referencing private modules is: `<HOSTNAME>/<ORGANIZATION>/<MODULE NAME>/<PROVIDER>`
+- The hostname for Terraform Cloud is : `https://app.terraform.io/`
+
 ### Terraform Cloud
+
+- provides policy-as-code through `Sentinel`
+- provides RBAC
+- audit logs
+- Encrypts the state at-rest
+- protects with TLS in-transit
+
+Source: [https://developer.hashicorp.com/terraform/language/state/sensitive-data#recommendations](https://developer.hashicorp.com/terraform/language/state/sensitive-data#recommendations)
 
 > for CLI and API interactions, API tokens usually need to be generated to access Terraform Cloud; see [here](https://developer.hashicorp.com/terraform/cli/commands/login)
 
 ### Terraform Enterprise
 
 - uses PostgreSQL as the backend database
+
+#### Supported OS:
+
+- Debian 10 / 11
+- Ubuntu 18.04 / 20.04
+- Red Hat Enterprise Linux 7.4 - 7.9 / 8.4 - 8.8 (RedHat Linux Requirements)
+- CentOS 7.4 - 7.9 / 8.4 (CentOS Requirements)
+- Amazon Linux 2.0 / 2023
+- Oracle Linux 7.4 - 7.9 / 8.4
+
+[Documentation](https://developer.hashicorp.com/terraform/enterprise/deploy/replicated/requirements/os-specific/supported-os)
 
 ### Policy As Code
 
@@ -535,6 +652,29 @@ Benefits according to [Hashicorp](https://developer.hashicorp.com/sentinel/docs/
 - Version Control
 - Testing
 - Automation
+
+#### Sentinel
+
+- *hard mandatory*
+- *soft mandatory*
+- *advisory*
+
+[Policy levels](https://developer.hashicorp.com/terraform/cloud-docs/policy-enforcement/manage-policy-sets#enforcement-levels)
+
+#### OPA
+
+#### Supported VCS
+
+> VCS = version control system
+
+- For Terraform Cloud / HCP Terraform and Terraform Enterprise
+
+[Source](https://developer.hashicorp.com/terraform/cloud-docs/vcs#supported-vcs-providers)
+
+## Terraform public publishing
+
+- must follow format: `terraform-<provider>-<name>`
+- at least one release tag
 
 ## Azure Verified Modules (AVM)
 

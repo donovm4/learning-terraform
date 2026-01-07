@@ -23,6 +23,7 @@ provider "azurerm" {
     }
   }
 
-  subscription_id = var.subscription_id
+  # Used for local e2e testing
+  # subscription_id = var.subscription_id
 
 }

@@ -8,12 +8,12 @@ terraform {
   }
 
   # Must be specified POST-deployment of storage used for remote
-#   backend "azurerm" {
-#     resource_group_name  = "rg-remote-terraform-state"
-#     container_name       = "prod-remote"
-#     storage_account_name = "remotestatesteo2v"
-#     key                  = "terraform.tfstate"
-#   }
+  #   backend "azurerm" {
+  #     resource_group_name  = "rg-remote-terraform-state"
+  #     container_name       = "prod-remote"
+  #     storage_account_name = "remotestatesteo2v"
+  #     key                  = "terraform.tfstate"
+  #   }
 }
 
 provider "azurerm" {
