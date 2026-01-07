@@ -1,0 +1,74 @@
+---
+name: e2e - 01-data_references
+
+on:
+  push:
+    branches:
+      - actions # Run tests on pushes to the development branch
+#   pull_request:
+#     branches:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: e2e
+    env:
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_USE_OIDC: true 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3 
+        with:
+          terraform_version: ">=1.5.0"
+
+      - name: Terraform Init
+        run: terraform init 
+        env:
+          TF_LOG: INFO # Enable detailed logging for debugging
+        working-directory: ./examples/01-data_references/run_1
+        shell: bash
+
+      - name: Check Terraform formatting
+        run: terraform fmt -check
+        working-directory: ./examples/01-data_references/run_1
+        shell: bash
+
+      - name: Validate Terraform configuration
+        run: terraform validate
+        working-directory: ./examples/01-data_references/run_1
+        shell: bash 
+
+      - name: terraform plan
+        run: |
+          terraform plan -detailed-exitcode
+          echo PLANCODE="$?" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+        working-directory: ./examples/01-data_references/run_1
+        shell: bash
+
+      - name: terraform apply
+        run: terraform apply -auto-approve
+        working-directory: ./examples/01-data_references/run_1
+        shell: bash
+
+      - name: terraform plan
+        run: |
+          terraform plan -detailed-exitcode
+          echo PLANCODE="$?" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+        working-directory: ./examples/01-data_references/run_1
+        shell: bash
+
+      - name: terraform destroy
+        run: terraform destroy -auto-approve
+        working-directory: ./examples/01-data_references/run_1
+        shell: bash
+        if: always()
